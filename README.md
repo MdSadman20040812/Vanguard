@@ -1,8 +1,26 @@
 # Vanguard Compliance Engine 📊 — Legacy ESG Data Auditor
 
-Vanguard is an automated ESG audit pipeline that ingests raw, unstructured accounting logs or utility ledgers from legacy enterprise ERP systems. Built with **LangGraph**, it identifies purchase records, extracts utility units, maps items to Scope 1/2/3 greenhouse gas classifications, and generates compliance dashboards.
+[![Python: 3.10+](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://www.python.org/)
+[![Framework: LangGraph](https://img.shields.io/badge/Framework-LangGraph-emerald.svg)](https://github.com/langchain-ai/langgraph)
+[![Data: Pandas](https://img.shields.io/badge/Data-Pandas-150458.svg)](https://pandas.pydata.org/)
+[![Compliance: GHG Protocol](https://img.shields.io/badge/Compliance-GHG_Protocol-green.svg)](https://ghgprotocol.org/)
 
-## System Workflows
+**Vanguard** is an automated ESG audit pipeline that ingests raw, unstructured accounting logs or utility ledgers from legacy enterprise ERP systems. Built with **LangGraph**, it identifies purchase records, extracts utility units, maps items to Scope 1/2/3 greenhouse gas classifications, and generates compliance dashboards.
+
+---
+
+## 📖 Table of Contents
+
+1. [System Workflows](#-system-workflows)
+2. [Architecture Design](#-architecture-design)
+3. [Installation & Setup](#-installation--setup)
+4. [Usage Guide](#-usage-guide)
+5. [Output Samples](#-output-samples)
+6. [License](#-license)
+
+---
+
+## 🔄 System Workflows
 
 ```mermaid
 flowchart TD
@@ -20,17 +38,53 @@ flowchart TD
 3.  **Carbon Equivalence Calculator**: Applies international conversion emission factors to convert units into metric tons of CO2e.
 4.  **Reporting Node**: Aggregates totals for corporate compliance audits.
 
-## Getting Started
+---
 
-### 1. Installation
-Install dependencies:
+## 🚀 Installation & Setup
+
+<details>
+<summary>📋 Step 1: Clone Repository</summary>
+
+```bash
+git clone https://github.com/MdSadman20040812/Vanguard.git
+cd Vanguard
+```
+</details>
+
+<details>
+<summary>📦 Step 2: Install Dependencies</summary>
+
 ```bash
 pip install -r requirements.txt
 ```
+</details>
 
-### 2. Run Pipeline
-Execute the pipeline against sample ERP ledger logs:
+<details>
+<summary>▶️ Step 3: Run Pipeline</summary>
+
 ```bash
 python main.py
 ```
 This processes the local CSV records, runs the carbon classifier nodes, and prints the audit report showing total Scope 1/2/3 emission metrics.
+</details>
+
+---
+
+## 📊 Output Samples
+
+The pipeline generates:
+- **Console Report**: Tabular breakdown of emissions by scope
+- **HTML Dashboard**: Visual compliance report with charts
+- **CSV Export**: Machine-readable audit trail for regulatory submission
+
+---
+
+## 📄 License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
+---
+
+<div align="center">
+  <sub>Built with rigor. Deployed with evidence. • 2026</sub>
+</div>
