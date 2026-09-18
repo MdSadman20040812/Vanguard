@@ -1,90 +1,78 @@
-# Vanguard Compliance Engine 📊 — Legacy ESG Data Auditor
+![Vanguard overview](docs/media/overview.svg)
 
-[![Python: 3.10+](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://www.python.org/)
-[![Framework: LangGraph](https://img.shields.io/badge/Framework-LangGraph-emerald.svg)](https://github.com/langchain-ai/langgraph)
-[![Data: Pandas](https://img.shields.io/badge/Data-Pandas-150458.svg)](https://pandas.pydata.org/)
-[![Compliance: GHG Protocol](https://img.shields.io/badge/Compliance-GHG_Protocol-green.svg)](https://ghgprotocol.org/)
+# Vanguard
 
-**Vanguard** is an automated ESG audit pipeline that ingests raw, unstructured accounting logs or utility ledgers from legacy enterprise ERP systems. Built with **LangGraph**, it identifies purchase records, extracts utility units, maps items to Scope 1/2/3 greenhouse gas classifications, and generates compliance dashboards.
+**From a sample ERP ledger to a readable emissions dashboard.**
 
----
+Vanguard is a small LangGraph demonstration of CSV ingestion, rule-based Scope 1/2/3 classification, and illustrative carbon calculations. It turns the included ledger into an HTML report with per-record estimates and scope totals—an inspectable starting point for reporting workflows, not a certified compliance engine.
 
-## 📖 Table of Contents
+[Quickstart](#quickstart) · [Workflow](#workflow) · [Input and configuration](#input-and-configuration) · [Limitations](#limitations)
 
-1. [System Workflows](#-system-workflows)
-2. [Architecture Design](#-architecture-design)
-3. [Installation & Setup](#-installation--setup)
-4. [Usage Guide](#-usage-guide)
-5. [Output Samples](#-output-samples)
-6. [License](#-license)
-
----
-
-## 🔄 System Workflows
+## Workflow
 
 ```mermaid
-flowchart TD
-    ERP[Legacy ERP CSV Ledger] --> Parser[Data Normalization Node]
-    Parser --> Classifier[Scope Classification Node]
-    Classifier --> Carbon[Carbon Equivalence Calculator Node]
-    Carbon --> Dashboard[Regulatory Reporting & PDF Summary Node]
+flowchart LR
+    C[sample_erp_data.csv] --> N[normalize_data: CSV reader]
+    N --> S[classify_scope: keyword rules]
+    S --> E[calculate_carbon: quantity times factor]
+    F[EMISSION_FACTORS in main.py] --> E
+    E --> H[esg_report.html]
+    E --> T[Per-record estimates and scope totals]
 ```
 
-1.  **Data Normalization Node**: Sanitizes date formats, currency columns, and extracts units (e.g. kWh, gallons, tickets).
-2.  **Scope Classification Node**: Categorizes items into Greenhouse Gas Protocol zones:
-    *   **Scope 1**: Direct emissions (e.g. diesel freight fuel).
-    *   **Scope 2**: Indirect electricity emissions (e.g. grid utility power).
-    *   **Scope 3**: Indirect value chain/travel emissions (e.g. business flights).
-3.  **Carbon Equivalence Calculator**: Applies international conversion emission factors to convert units into metric tons of CO2e.
-4.  **Reporting Node**: Aggregates totals for corporate compliance audits.
+This follows the graph constructed in the `__main__` block of [main.py](main.py). Its calculator/exporter is `carbon_calculator_exporter_node`.
 
----
+## Quickstart
 
-## 🚀 Installation & Setup
-
-<details>
-<summary>📋 Step 1: Clone Repository</summary>
+Use Python 3.10+ as the project's documented baseline, with Git and pip available.
 
 ```bash
 git clone https://github.com/MdSadman20040812/Vanguard.git
 cd Vanguard
-```
-</details>
-
-<details>
-<summary>📦 Step 2: Install Dependencies</summary>
-
-```bash
 pip install -r requirements.txt
-```
-</details>
-
-<details>
-<summary>▶️ Step 3: Run Pipeline</summary>
-
-```bash
 python main.py
 ```
-This processes the local CSV records, runs the carbon classifier nodes, and prints the audit report showing total Scope 1/2/3 emission metrics.
-</details>
 
----
+The program reads `sample_erp_data.csv` beside the script and writes `esg_report.html` in the same directory, replacing any existing report. Open that file in a browser after the run completes. A [committed sample dashboard](esg_report.html) is available to download and inspect before running anything.
 
-## 📊 Output Samples
+The current pipeline does not call an LLM or require an API key. It uses Python's `csv` module rather than Pandas.
 
-The pipeline generates:
-- **Console Report**: Tabular breakdown of emissions by scope
-- **HTML Dashboard**: Visual compliance report with charts
-- **CSV Export**: Machine-readable audit trail for regulatory submission
+## Input and configuration
 
----
+The supplied CSV uses these columns:
 
-## 📄 License
+```csv
+TRANSACTION_ID,DATE,ACCOUNT,DESCRIPTION,AMOUNT,QTY
+```
 
-Distributed under the MIT License. See `LICENSE` for more information.
+`DESCRIPTION` and `QTY` drive the estimate. The quantity parser expects a numeric token followed by an optional space-separated unit, such as `12500 kWh`. `AMOUNT` and `ACCOUNT` are not used to calculate emissions.
 
----
+| Rule in `main.py` | Assigned category |
+| --- | --- |
+| Description contains `diesel` or `fuel` | Scope 1, diesel factor |
+| Description contains `grid`, `electricity`, or `power` | Scope 2, electricity factor |
+| Everything else | Scope 3, flights factor |
 
-<div align="center">
-  <sub>Built with rigor. Deployed with evidence. • 2026</sub>
-</div>
+The `EMISSION_FACTORS` dictionary supplies the coefficients. Review their units, geography, reporting period, and provenance before using this pattern with real data. The source does not convert units or validate them against the selected factor.
+
+## Source map
+
+| File | Purpose |
+| --- | --- |
+| [main.py](main.py) | State, keyword classifier, factors, HTML template, and executable graph |
+| [sample_erp_data.csv](sample_erp_data.csv) | Default ledger fixture |
+| [esg_report.html](esg_report.html) | Committed report example; overwritten by a run |
+| [requirements.txt](requirements.txt) | Declared Python dependencies |
+
+## Limitations
+
+- Estimates are illustrative. This repository does not establish conformity with a greenhouse-gas accounting standard or regulatory submission requirements.
+- The fallback classification treats every unrecognized description as a flight. Real workflows need an explicit unknown/review category and broader coverage.
+- Factors are hard-coded without source/version metadata, and dates and currency are read rather than normalized. There is no PDF export or CSV audit-trail exporter in the current source.
+- The reusable `build_esg_compliance_workflow()` helper references an undefined `carbon_calculator_node`. The documented `python main.py` path constructs its graph separately with the defined exporter.
+- Ledger text is inserted into HTML without escaping. Use trusted fixtures; escape untrusted values before exposing the report as a service. The report loads fonts from Google Fonts.
+- Dependencies are not locked, and this documentation refresh did not execute the application. No license file is present in the inspected repository tree.
+
+## Contribute
+
+Open an issue or pull request with a small anonymized ledger and expected classification. Useful improvements include sourced factor catalogs, unit validation, an unknown-category review path, HTML escaping, and tests that align the graph-builder helper with the executable entry point.
