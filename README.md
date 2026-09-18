@@ -1,80 +1,41 @@
-![Vanguard](https://img.shields.io/badge/Vanguard-ESG%20Compliance%20Auditor-059669?style=for-the-badge)
-![LangGraph](https://img.shields.io/badge/LangGraph-0.2-1c1c1c?style=flat-square)
-![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=flat-square&logo=python)
-![Pandas](https://img.shields.io/badge/Pandas-2.0-150458?style=flat-square&logo=pandas)
-![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
+![Vanguard — From sample ledger to emissions report](docs/visuals/header.png)
 
-**ESG compliance auditor — map legacy ERP ledgers to GHG Protocol Scope 1/2/3 emissions.**
+# Vanguard
 
----
+A LangGraph demonstration that normalizes ledger CSV rows, classifies sample activities and calculates an HTML emissions report using explicit factors in the code.
 
-## 🏗️ Pipeline
+**[Source guide](#source-guide)** · **[Getting started](#getting-started)** · **[Scope & limitations](#scope--limitations)**
 
-```mermaid
-graph LR
-    subgraph Input
-        ERP[Legacy ERP<br/>Ledger Data]
-        RULES[GHG Protocol<br/>Ruleset]
-    end
-    subgraph LangGraph Pipeline
-        EXTRACT[Extract<br/>Activity Data]
-        MAP[Map<br/>Emission Factors]
-        CALC[Calculate<br/>Scope 1/2/3]
-        AUDIT[Audit<br/>Discrepancies]
-        REPORT[Generate<br/>Report]
-    end
-    subgraph Output
-        RPT[Compliance<br/>Report]
-        EMISSIONS[Emissions<br/>Summary]
-    end
-    ERP --> EXTRACT
-    RULES --> MAP
-    EXTRACT --> MAP
-    MAP --> CALC
-    CALC --> AUDIT
-    AUDIT --> REPORT
-    REPORT --> RPT
-    REPORT --> EMISSIONS
-```
+## Preview
 
----
+[![Browser rendering of the repository’s sample Scope 1/2/3 report.](docs/visuals/preview.png)](docs/visuals/preview.png)
 
-## ✨ Features
+Browser rendering of the repository’s sample Scope 1/2/3 report.
 
-- **ERP extraction** — read legacy ledger formats (CSV, Excel, DB)
-- **Emission factor mapping** — match activities to GHG Protocol factors
-- **Scope 1/2/3 calculation** — comprehensive emissions accounting
-- **Discrepancy detection** — flag missing or inconsistent data
-- **Compliance reporting** — structured reports with methodology notes
+## Source guide
 
----
+[![Repository components and their source paths](docs/visuals/repository-guide.png)](docs/visuals/repository-guide.png)
 
-## 🚀 Quick Start
+| Component | Open source | Purpose |
+| :-- | :-- | :-- |
+| Workflow | [`main.py`](main.py) | Normalize, classify and calculate. |
+| Example ledger | [`sample_erp_data.csv`](sample_erp_data.csv) | Input transactions for the demonstration. |
+| HTML report | [`esg_report.html`](esg_report.html) | Checked-in emissions dashboard. |
+| Dependencies | [`requirements.txt`](requirements.txt) | Python workflow dependencies. |
+
+## Getting started
+
+From a local checkout of this repository:
 
 ```bash
-pip install -r requirements.txt
-python -m vanguard.audit --ledger emissions_2024.csv --rules ghg_protocol.json
+python -m pip install -r requirements.txt
+python main.py
 ```
+
+## Scope & limitations
+
+Emission factors are demonstration constants, not a verified current inventory methodology. The preview shows a checked-in sample report; it is not a certified ESG audit.
 
 ---
 
-## 📁 Project Structure
-
-```
-Vanguard/
-├── vanguard/
-│   ├── graph.py           # LangGraph pipeline
-│   ├── extract.py         # ERP data extraction
-│   ├── mapper.py          # Emission factor mapping
-│   ├── calculator.py      # Scope 1/2/3 math
-│   ├── audit.py           # Discrepancy detection
-│   └── reporter.py        # Compliance report generation
-├── tests/
-└── README.md
-```
-
----
-
-## 📄 License
-
-MIT © Md Sadman Bin Masud
+[Visual asset sources and presentation notes](docs/visuals/README.md)
